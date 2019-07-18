@@ -1,0 +1,1 @@
+alter table parking_lot add constraint Positive_capacity check (capacity >= 0)
