@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,10 +33,15 @@ public class ParkingLotControllerTest {
     public void should_return_a_parkingLot_when_post_it() throws Exception {
         // given
         ParkingLot parkingLot = new ParkingLot("name",10,"ZhuHai");
+        when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLot);
         // when
         mockMvc.perform(post("/parking-lots")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                .content("{\n" +
+                        "    \"name\":\"name\",\n" +
+                        "    \"capacity\":10,\n" +
+                        "    \"location\":\"Zhuhai\"\n" +
+                        "}"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name")

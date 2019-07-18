@@ -8,7 +8,7 @@ public class ParkingLot {
 
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
     @Column(unique = true)
     private String name;
@@ -17,11 +17,11 @@ public class ParkingLot {
 
     private String location;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,21 +56,5 @@ public class ParkingLot {
         this.name = name;
         this.capacity = capacity;
         this.location = location;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ParkingLot that = (ParkingLot) o;
-        return capacity == that.capacity &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(location, that.location);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, capacity, location);
     }
 }
