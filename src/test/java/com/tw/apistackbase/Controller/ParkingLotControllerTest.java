@@ -97,4 +97,21 @@ public class ParkingLotControllerTest {
                 // then
                 .andExpect(jsonPath("$.name").value(parkingLots.get(0).getName()));
     }
+
+    @Test
+    public void should_return_a_parkingLot_when_update_its_capacity_by_id() throws Exception {
+        // given
+        parkingLots.get(0).setId(1L);
+        parkingLots.get(0).setCapacity(1000);
+        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLots.get(0));
+        // when
+        mockMvc.perform(put("/parking-lots/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"capacity\":1000\n" +
+                        "}"))
+                // then
+                .andExpect(jsonPath("$.capacity").value(1000));
+    }
 }

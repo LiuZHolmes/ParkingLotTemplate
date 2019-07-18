@@ -28,10 +28,10 @@ public class ParkingLotController {
     }
 
     @GetMapping("/parking-lots")
-    public ResponseEntity getParkingLots(@RequestParam(value = "page",defaultValue = "1") long page,
+    public ResponseEntity getParkingLots(@RequestParam(value = "page", defaultValue = "1") long page,
                                          @RequestParam(value = "pageSize", defaultValue = "0") long pageSize) {
         return pageSize == 0 ? ResponseEntity.ok(parkingLotRepository.findAll())
-        : ResponseEntity.ok(parkingLotRepository.findAll().stream()
+                : ResponseEntity.ok(parkingLotRepository.findAll().stream()
                 .skip((page - 1) * pageSize)
                 .limit(pageSize).collect(Collectors.toList()));
     }
@@ -43,6 +43,22 @@ public class ParkingLotController {
                 .filter(x -> x.getId() == id)
                 .findFirst();
         if (optionalParkingLot.isPresent()) return ResponseEntity.ok(optionalParkingLot.get());
+        else return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/parking-lots/{id}")
+    public ResponseEntity updateParkingLotSetCapacityByID(@PathVariable long id, @RequestBody ParkingLot parkingLot) {
+
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
+                .stream()
+                .filter(x -> x.getId() == id)
+                .findFirst();
+        if (optionalParkingLot.isPresent()) {
+            ParkingLot newParkingLot = optionalParkingLot.get();
+            newParkingLot.setCapacity(parkingLot.getCapacity());
+            newParkingLot = parkingLotRepository.save(newParkingLot);
+            return ResponseEntity.ok(newParkingLot);
+        }
         else return ResponseEntity.notFound().build();
     }
 }
