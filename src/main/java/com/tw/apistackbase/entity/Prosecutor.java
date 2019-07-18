@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 public class Prosecutor {
@@ -18,6 +19,12 @@ public class Prosecutor {
 
     @NotNull
     private String name;
+
+    private int age;
+    private String gender;
+    private Date birthday;
+    private String IDNumber;
+    private int experience;
 
     public String getId() {
         return id;
