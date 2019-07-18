@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -86,5 +85,16 @@ public class ParkingLotControllerTest {
         // when
         mockMvc.perform(get("/parking-lots?page=1&pageSize=5"))
                 .andExpect(jsonPath("$.length()").value(5));
+    }
+
+    @Test
+    public void should_return_a_parkingLot_when_find_it_by_id() throws Exception {
+        // given
+        parkingLots.get(0).setId(1L);
+        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        //when
+        mockMvc.perform(get("/parking-lots/1"))
+                // then
+                .andExpect(jsonPath("$.name").value(parkingLots.get(0).getName()));
     }
 }

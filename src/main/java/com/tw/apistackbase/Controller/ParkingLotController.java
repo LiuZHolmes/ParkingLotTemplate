@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,5 +34,15 @@ public class ParkingLotController {
         : ResponseEntity.ok(parkingLotRepository.findAll().stream()
                 .skip((page - 1) * pageSize)
                 .limit(pageSize).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/parking-lots/{id}")
+    public ResponseEntity findParkingLotByID(@PathVariable long id) {
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
+                .stream()
+                .filter(x -> x.getId() == id)
+                .findFirst();
+        if (optionalParkingLot.isPresent()) return ResponseEntity.ok(optionalParkingLot.get());
+        else return ResponseEntity.notFound().build();
     }
 }
