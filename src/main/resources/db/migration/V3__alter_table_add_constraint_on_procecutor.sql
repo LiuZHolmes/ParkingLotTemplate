@@ -1,2 +1,0 @@
-ALTER TABLE prosecutor
-ADD CONSTRAINT age CHECK (age >=18);
