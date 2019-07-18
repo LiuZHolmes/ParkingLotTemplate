@@ -4,10 +4,7 @@ import com.tw.apistackbase.Model.ParkingLot;
 import com.tw.apistackbase.Repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ParkingLotController {
@@ -19,6 +16,12 @@ public class ParkingLotController {
     public ResponseEntity postParkingLot(@RequestBody ParkingLot newParkingLot) {
         ParkingLot parkingLot = parkingLotRepository.save(newParkingLot);
         return ResponseEntity.ok(parkingLot);
+    }
+
+    @DeleteMapping("/parking-lots/{id}")
+    public ResponseEntity deleteParkingLotByID(@PathVariable String id) {
+        parkingLotRepository.deleteById(Long.valueOf(id));
+        return ResponseEntity.ok().build();
     }
 
 }

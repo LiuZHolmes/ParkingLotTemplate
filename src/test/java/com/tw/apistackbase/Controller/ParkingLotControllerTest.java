@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,5 +47,15 @@ public class ParkingLotControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name")
                         .value("name"));
+    }
+
+    @Test
+    public void should_delete_a_parkingLot_when_do_so() throws Exception {
+        // given
+
+        // when
+        mockMvc.perform(delete("/parking-lots/1"))
+                // then
+                .andExpect(status().isOk());
     }
 }
