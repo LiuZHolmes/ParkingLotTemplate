@@ -33,10 +33,21 @@ public class ParkingLotRepositoryTest {
     }
 
     @Test
-    public void should_error_when_save_same_name_parkingLot() {
+    public void should_throw_exception_when_save_same_name_parkingLot() {
         // given
         parkingLotRepository.save(parkingLots.get(0));
         ParkingLot parkingLot = new ParkingLot(parkingLots.get(0).getName(),10,"GuangZhou");
+        // when
+        assertThrows(DataIntegrityViolationException.class,()->{
+            parkingLotRepository.save(parkingLot);
+            parkingLotRepository.flush();
+        });
+    }
+
+    @Test
+    public void should_throw_exception_when_save_same_negative_capacity_parkingLot() {
+        // given
+        ParkingLot parkingLot = new ParkingLot("negative",-1,"GuangZhou");
         // when
         assertThrows(DataIntegrityViolationException.class,()->{
             parkingLotRepository.save(parkingLot);
