@@ -124,7 +124,7 @@ public class ParkingLotControllerTest {
         // given
         ParkingLot parkingLot = parkingLots.get(0);
         parkingLot.setId(1L);
-        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.of(parkingLot));
         when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLot);
         // when
         mockMvc.perform(put("/parking-lots/1/orders/")
@@ -149,7 +149,23 @@ public class ParkingLotControllerTest {
         when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.of(parkingLot));
         // when
         mockMvc.perform(delete("/parking-lots/1/orders/123456"))
+                // then
                 .andExpect(status().isOk());
-        // then
+    }
+
+    @Test
+    public void should_error_when_park_a_car_and_parkingLot_is_full () throws Exception {
+        // given
+        ParkingLot parkingLot = mock(ParkingLot.class);
+        when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.of(parkingLot));
+        when(parkingLot.isAvailable()).thenReturn(false);
+        // when
+        mockMvc.perform(put("/parking-lots/1/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"license-plate-number\":\"123456\"\n" +
+                        "}"))
+                // then
+                .andExpect(status().isBadRequest());
     }
 }

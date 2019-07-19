@@ -66,20 +66,14 @@ public class ParkingLotController {
     }
 
     @PutMapping("/parking-lots/{id}/orders/")
-    public ResponseEntity parkCarAndCreateOrder(@PathVariable long id, @RequestBody Car car) {
-        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
-                .stream()
-                .filter(x -> x.getId() == id)
-                .findFirst();
-        if (optionalParkingLot.isPresent()) {
-            ParkingLot parkingLot = optionalParkingLot.get();
-            if (parkingLot.isAvailable()) {
-                Order order = new Order("open", new Date(), car.getLicensePlateNumber());
-                parkingLot.getOrders().add(order);
-                parkingLotRepository.save(parkingLot);
-                return ResponseEntity.ok(order);
-            } else return ResponseEntity.badRequest().build();
-        } else return ResponseEntity.notFound().build();
+    public ResponseEntity parkCarAndCreateOrder(@PathVariable long id, @RequestBody Car car) throws Exception {
+        ParkingLot parkingLot = parkingLotRepository.findById(id).orElseThrow(Exception::new);
+        if (parkingLot.isAvailable()) {
+            Order order = new Order("open", new Date(), car.getLicensePlateNumber());
+            parkingLot.getOrders().add(order);
+            parkingLotRepository.save(parkingLot);
+            return ResponseEntity.ok(order);
+        } else return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/parking-lots/{parkingLotid}/orders/{licensePlateNumber}")
@@ -92,7 +86,7 @@ public class ParkingLotController {
                 .stream()
                 .filter(x -> x.getLicensePlateNumber().equals(licensePlateNumber))
                 .findFirst().orElseThrow(Exception::new).setStatus("close");
-            parkingLotRepository.save(parkingLot);
-            return ResponseEntity.ok().build();
+        parkingLotRepository.save(parkingLot);
+        return ResponseEntity.ok().build();
     }
 }
