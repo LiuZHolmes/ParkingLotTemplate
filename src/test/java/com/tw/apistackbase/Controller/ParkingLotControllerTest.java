@@ -64,19 +64,15 @@ public class ParkingLotControllerTest {
                         .value("name"));
     }
 
-//    @Test
-//    public void should_delete_a_parkingLot_when_do_so() throws Exception {
-//        // given
-//        ParkingLot parkingLot = new ParkingLot("name",10,"ZhuHai");
-//        parkingLot.setId(1L);
-//        Optional<ParkingLot> optionalEntityType = Optional.of(parkingLot);
-//        when(parkingLotRepository.findById(1L)).thenReturn(optionalEntityType);
-//        // when
-//        mockMvc.perform(delete("/parking-lots/1"))
-//                // then
-//                .andExpect(status().isOk());
-//        verify(parkingLotRepository,times(1)).delete(parkingLot);
-//    }
+    @Test
+    public void should_delete_a_parkingLot_when_do_so() throws Exception {
+        // given
+
+        // when
+        mockMvc.perform(delete("/parking-lots/1"))
+                // then
+                .andExpect(status().isOk());
+    }
 
     @Test
     public void should_return_parking_lots_page_by_page_when_get_them() throws Exception {
