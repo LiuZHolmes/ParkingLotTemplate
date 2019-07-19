@@ -130,9 +130,26 @@ public class ParkingLotControllerTest {
         mockMvc.perform(put("/parking-lots/1/orders/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
-                        "    \"license-plate-number\":\"Fly138\"\n" +
+                        "    \"license-plate-number\":\"123456\"\n" +
                         "}"))
                 // then
                 .andExpect(jsonPath("$.status").value("open"));
+    }
+
+    @Test
+    public void should_close_an_order_when_fetch_car() throws Exception {
+        // given
+        ParkingLot parkingLot = parkingLots.get(0);
+        parkingLot.setId(1L);
+        Order order = new Order("close",new Date(),"123456");
+        List<Order> orders = new ArrayList<>();
+        orders.add(order);
+        parkingLot.setOrders(orders);
+        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.of(parkingLot));
+        // when
+        mockMvc.perform(delete("/parking-lots/1/orders/123456"))
+                .andExpect(status().isOk());
+        // then
     }
 }

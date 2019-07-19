@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,8 @@ public class ParkingLotController {
                                          @RequestParam(value = "pageSize", defaultValue = "0") int pageSize) {
         return pageSize == 0 ? ResponseEntity.ok(parkingLotRepository.findAll())
                 : ResponseEntity.ok(parkingLotRepository
-                    .findAll(PageRequest.of(page,pageSize))
-                    .stream().collect(Collectors.toList()));
+                .findAll(PageRequest.of(page, pageSize))
+                .stream().collect(Collectors.toList()));
     }
 
     @GetMapping("/parking-lots/{id}")
@@ -52,7 +53,6 @@ public class ParkingLotController {
 
     @PutMapping("/parking-lots/{id}")
     public ResponseEntity updateParkingLotSetCapacityByID(@PathVariable long id, @RequestBody ParkingLot parkingLot) {
-
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
                 .stream()
                 .filter(x -> x.getId() == id)
@@ -62,12 +62,11 @@ public class ParkingLotController {
             newParkingLot.setCapacity(parkingLot.getCapacity());
             newParkingLot = parkingLotRepository.save(newParkingLot);
             return ResponseEntity.ok(newParkingLot);
-        }
-        else return ResponseEntity.notFound().build();
+        } else return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/parking-lots/{id}/orders/")
-    public ResponseEntity parkCarAndCreateOrder(@PathVariable long id,@RequestBody Car car) {
+    public ResponseEntity parkCarAndCreateOrder(@PathVariable long id, @RequestBody Car car) {
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
                 .stream()
                 .filter(x -> x.getId() == id)
@@ -75,13 +74,25 @@ public class ParkingLotController {
         if (optionalParkingLot.isPresent()) {
             ParkingLot parkingLot = optionalParkingLot.get();
             if (parkingLot.isAvailable()) {
-                Order order = new Order("open",new Date(),car.getLicensePlateNumber());
+                Order order = new Order("open", new Date(), car.getLicensePlateNumber());
                 parkingLot.getOrders().add(order);
                 parkingLotRepository.save(parkingLot);
                 return ResponseEntity.ok(order);
-            }
-            else return ResponseEntity.badRequest().build();
-        }
-        else return ResponseEntity.notFound().build();
+            } else return ResponseEntity.badRequest().build();
+        } else return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/parking-lots/{parkingLotid}/orders/{licensePlateNumber}")
+    public ResponseEntity fetchCarAndCloseOrder(@PathVariable long parkingLotid, @PathVariable String licensePlateNumber) throws Exception {
+        ParkingLot parkingLot = parkingLotRepository.findAll()
+                .stream()
+                .filter(x -> x.getId() == parkingLotid)
+                .findFirst().orElseThrow(Exception::new);
+        parkingLot.getOrders()
+                .stream()
+                .filter(x -> x.getLicensePlateNumber().equals(licensePlateNumber))
+                .findFirst().orElseThrow(Exception::new).setStatus("close");
+            parkingLotRepository.save(parkingLot);
+            return ResponseEntity.ok().build();
     }
 }
