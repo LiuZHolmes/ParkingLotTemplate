@@ -95,7 +95,7 @@ public class ParkingLotControllerTest {
     public void should_return_a_parkingLot_when_find_it_by_id() throws Exception {
         // given
         parkingLots.get(0).setId(1L);
-        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.ofNullable(parkingLots.get(0)));
         //when
         mockMvc.perform(get("/parking-lots/1"))
                 // then
@@ -107,7 +107,7 @@ public class ParkingLotControllerTest {
         // given
         parkingLots.get(0).setId(1L);
         parkingLots.get(0).setCapacity(1000);
-        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.ofNullable(parkingLots.get(0)));
         when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLots.get(0));
         // when
         mockMvc.perform(put("/parking-lots/1")
@@ -145,7 +145,6 @@ public class ParkingLotControllerTest {
         List<Order> orders = new ArrayList<>();
         orders.add(order);
         parkingLot.setOrders(orders);
-        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
         when(parkingLotRepository.findById(anyLong())).thenReturn(Optional.of(parkingLot));
         // when
         mockMvc.perform(delete("/parking-lots/1/orders/123456"))

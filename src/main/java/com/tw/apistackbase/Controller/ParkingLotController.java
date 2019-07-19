@@ -42,27 +42,16 @@ public class ParkingLotController {
     }
 
     @GetMapping("/parking-lots/{id}")
-    public ResponseEntity findParkingLotByID(@PathVariable long id) {
-        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
-                .stream()
-                .filter(x -> x.getId() == id)
-                .findFirst();
-        if (optionalParkingLot.isPresent()) return ResponseEntity.ok(optionalParkingLot.get());
-        else return ResponseEntity.notFound().build();
+    public ResponseEntity findParkingLotByID(@PathVariable long id) throws Exception {
+        return ResponseEntity.ok(parkingLotRepository.findById(id).orElseThrow(Exception::new));
     }
 
     @PutMapping("/parking-lots/{id}")
-    public ResponseEntity updateParkingLotSetCapacityByID(@PathVariable long id, @RequestBody ParkingLot parkingLot) {
-        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
-                .stream()
-                .filter(x -> x.getId() == id)
-                .findFirst();
-        if (optionalParkingLot.isPresent()) {
-            ParkingLot newParkingLot = optionalParkingLot.get();
-            newParkingLot.setCapacity(parkingLot.getCapacity());
-            newParkingLot = parkingLotRepository.save(newParkingLot);
-            return ResponseEntity.ok(newParkingLot);
-        } else return ResponseEntity.notFound().build();
+    public ResponseEntity updateParkingLotSetCapacityByID(@PathVariable long id, @RequestBody ParkingLot parkingLot) throws Exception {
+        ParkingLot newParkingLot = parkingLotRepository.findById(id).orElseThrow(Exception::new);
+        newParkingLot.setCapacity(parkingLot.getCapacity());
+        newParkingLot = parkingLotRepository.save(newParkingLot);
+        return ResponseEntity.ok(newParkingLot);
     }
 
     @PutMapping("/parking-lots/{id}/orders/")
@@ -78,10 +67,7 @@ public class ParkingLotController {
 
     @DeleteMapping("/parking-lots/{parkingLotid}/orders/{licensePlateNumber}")
     public ResponseEntity fetchCarAndCloseOrder(@PathVariable long parkingLotid, @PathVariable String licensePlateNumber) throws Exception {
-        ParkingLot parkingLot = parkingLotRepository.findAll()
-                .stream()
-                .filter(x -> x.getId() == parkingLotid)
-                .findFirst().orElseThrow(Exception::new);
+        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotid).orElseThrow(Exception::new);
         parkingLot.getOrders()
                 .stream()
                 .filter(x -> x.getLicensePlateNumber().equals(licensePlateNumber))
