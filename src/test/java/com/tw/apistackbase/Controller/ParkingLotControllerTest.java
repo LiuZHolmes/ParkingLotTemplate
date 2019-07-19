@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -79,8 +80,9 @@ public class ParkingLotControllerTest {
     @Test
     public void should_return_parking_lots_page_by_page_when_get_them() throws Exception {
         // given
+        Page<ParkingLot> pagedParkingLots = new PageImpl(parkingLots.stream().limit(5).collect(Collectors.toList()));
         when(parkingLotRepository.findAll()).thenReturn(parkingLots);
-        // when(parkingLotRepository.findAll(any(PageRequest.class))).thenReturn(Page())
+        when(parkingLotRepository.findAll(any(PageRequest.class))).thenReturn(pagedParkingLots);
         // when
         mockMvc.perform(get("/parking-lots?page=1&pageSize=5"))
                 .andExpect(jsonPath("$.length()").value(5));
