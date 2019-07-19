@@ -1,6 +1,8 @@
 package com.tw.apistackbase.Model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +18,9 @@ public class ParkingLot {
     private int capacity;
 
     private String location;
+
+    @OneToMany(mappedBy = "parkingLot")
+    List<Order> orders;
 
     public Long getId() {
         return id;
@@ -49,12 +54,26 @@ public class ParkingLot {
         this.location = location;
     }
 
-    public ParkingLot() {
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    public ParkingLot(String name, int capacity, String location) {
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public ParkingLot() {
+        orders = new ArrayList<>();
+    }
+
+    public ParkingLot(String name, int capacity, String location, List<Order> orders) {
         this.name = name;
         this.capacity = capacity;
         this.location = location;
+        this.orders = orders;
+    }
+
+    public boolean isAvailable() {
+        return orders.size() < capacity;
     }
 }

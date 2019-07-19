@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,7 +29,7 @@ public class ParkingLotRepositoryTest {
     @Before
     public void setUp() {
         parkingLots = IntStream.rangeClosed(1, 2).boxed()
-                .map(x -> new ParkingLot(x + ": name", x, x + ": location"))
+                .map(x -> new ParkingLot(x + ": name", x, x + ": location" ,new ArrayList<>()))
                 .collect(Collectors.toList());
     }
 
@@ -36,7 +37,7 @@ public class ParkingLotRepositoryTest {
     public void should_throw_exception_when_save_same_name_parkingLot() {
         // given
         parkingLotRepository.save(parkingLots.get(0));
-        ParkingLot parkingLot = new ParkingLot(parkingLots.get(0).getName(),10,"GuangZhou");
+        ParkingLot parkingLot = new ParkingLot(parkingLots.get(0).getName(),10,"GuangZhou" ,new ArrayList<>());
         // when
         assertThrows(DataIntegrityViolationException.class,()->{
             parkingLotRepository.save(parkingLot);
@@ -47,7 +48,7 @@ public class ParkingLotRepositoryTest {
     @Test
     public void should_throw_exception_when_save_same_negative_capacity_parkingLot() {
         // given
-        ParkingLot parkingLot = new ParkingLot("negative",-1,"GuangZhou");
+        ParkingLot parkingLot = new ParkingLot("negative",-1,"GuangZhou",new ArrayList<>());
         // when
         assertThrows(DataIntegrityViolationException.class,()->{
             parkingLotRepository.save(parkingLot);

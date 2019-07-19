@@ -1,5 +1,7 @@
 package com.tw.apistackbase.Controller;
 
+import com.tw.apistackbase.Model.Car;
+import com.tw.apistackbase.Model.Order;
 import com.tw.apistackbase.Model.ParkingLot;
 import com.tw.apistackbase.Repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,25 @@ public class ParkingLotController {
             newParkingLot.setCapacity(parkingLot.getCapacity());
             newParkingLot = parkingLotRepository.save(newParkingLot);
             return ResponseEntity.ok(newParkingLot);
+        }
+        else return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/parking-lots/{id}/orders/")
+    public ResponseEntity parkCarAndCreateOrder(@PathVariable long id,@RequestBody Car car) {
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findAll()
+                .stream()
+                .filter(x -> x.getId() == id)
+                .findFirst();
+        if (optionalParkingLot.isPresent()) {
+            ParkingLot parkingLot = optionalParkingLot.get();
+            if (parkingLot.isAvailable()) {
+                Order order = new Order("open",new Date(),car.getLicensePlateNumber());
+                parkingLot.getOrders().add(order);
+                parkingLotRepository.save(parkingLot);
+                return ResponseEntity.ok(order);
+            }
+            else return ResponseEntity.badRequest().build();
         }
         else return ResponseEntity.notFound().build();
     }

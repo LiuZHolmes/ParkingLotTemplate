@@ -1,5 +1,6 @@
 package com.tw.apistackbase.Controller;
 
+import com.tw.apistackbase.Model.Order;
 import com.tw.apistackbase.Model.ParkingLot;
 import com.tw.apistackbase.Repository.ParkingLotRepository;
 import org.junit.Before;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,14 +47,14 @@ public class ParkingLotControllerTest {
     @Before
     public void setUp() throws Exception {
         parkingLots = IntStream.rangeClosed(1, 7).boxed()
-                .map(x -> new ParkingLot(x + ": name", x, x + ": location"))
+                .map(x -> new ParkingLot(x + ": name", x, x + ": location",new ArrayList<>()))
                 .collect(Collectors.toList());
     }
 
     @Test
     public void should_return_a_parkingLot_when_post_it() throws Exception {
         // given
-        ParkingLot parkingLot = new ParkingLot("name", 10, "ZhuHai");
+        ParkingLot parkingLot = new ParkingLot("name", 10, "ZhuHai", new ArrayList<>());
         when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLot);
         // when
         mockMvc.perform(post("/parking-lots")
@@ -114,5 +117,22 @@ public class ParkingLotControllerTest {
                         "}"))
                 // then
                 .andExpect(jsonPath("$.capacity").value(1000));
+    }
+
+    @Test
+    public void should_return_an_order_when_park_a_car() throws Exception {
+        // given
+        ParkingLot parkingLot = parkingLots.get(0);
+        parkingLot.setId(1L);
+        when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLot);
+        // when
+        mockMvc.perform(put("/parking-lots/1/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"license-plate-number\":\"Fly138\"\n" +
+                        "}"))
+                // then
+                .andExpect(jsonPath("$.status").value("open"));
     }
 }
