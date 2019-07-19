@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,6 +80,7 @@ public class ParkingLotControllerTest {
     public void should_return_parking_lots_page_by_page_when_get_them() throws Exception {
         // given
         when(parkingLotRepository.findAll()).thenReturn(parkingLots);
+        // when(parkingLotRepository.findAll(any(PageRequest.class))).thenReturn(Page())
         // when
         mockMvc.perform(get("/parking-lots?page=1&pageSize=5"))
                 .andExpect(jsonPath("$.length()").value(5));

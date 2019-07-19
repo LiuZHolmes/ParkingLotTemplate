@@ -3,6 +3,7 @@ package com.tw.apistackbase.Controller;
 import com.tw.apistackbase.Model.ParkingLot;
 import com.tw.apistackbase.Repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,12 @@ public class ParkingLotController {
     }
 
     @GetMapping("/parking-lots")
-    public ResponseEntity getParkingLots(@RequestParam(value = "page", defaultValue = "1") long page,
-                                         @RequestParam(value = "pageSize", defaultValue = "0") long pageSize) {
+    public ResponseEntity getParkingLots(@RequestParam(value = "page", defaultValue = "1") int page,
+                                         @RequestParam(value = "pageSize", defaultValue = "0") int pageSize) {
         return pageSize == 0 ? ResponseEntity.ok(parkingLotRepository.findAll())
-                : ResponseEntity.ok(parkingLotRepository.findAll().stream()
-                .skip((page - 1) * pageSize)
-                .limit(pageSize).collect(Collectors.toList()));
+                : ResponseEntity.ok(parkingLotRepository
+                    .findAll(PageRequest.of(page,pageSize))
+                    .stream().collect(Collectors.toList()));
     }
 
     @GetMapping("/parking-lots/{id}")
